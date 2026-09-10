@@ -21,7 +21,12 @@ rtic2-multi-head-test/
 |-- Cargo.toml
 |-- build.rs
 |-- Embed.toml
-|-- run-test.ps1
+|-- docs/
+|   |-- README.md
+|   |-- composition-test-summary.md
+|   `-- test-report.md
+|-- tools/
+|   `-- run-test.ps1
 |-- src/
 |   |-- main.rs
 |   |-- app_body_skeleton.rs
@@ -39,8 +44,6 @@ rtic2-multi-head-test/
 |           |-- app_head.rs
 |           |-- config.toml
 |           `-- app_body.rs
-|-- test-report.md
-`-- composition-test-summary.md
 ```
 
 `app_body_skeleton.rs` is the manually authored shared body. Each chip's
@@ -68,10 +71,10 @@ The complete command output is retained in [test-report.md](test-report.md).
 
 ## Reproduce
 
-From this directory:
+From the fixture root:
 
 ```powershell
-.\run-test.ps1
+.\tools\run-test.ps1
 ```
 
 The matrix uses the `thumbv7em-none-eabihf` target and Cargo offline mode.

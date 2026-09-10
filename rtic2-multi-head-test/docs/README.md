@@ -19,21 +19,21 @@ This composition step is intentional: a raw `include!("app_body_skeleton.rs")` n
 
 ## Run
 
-From this directory:
+From the fixture root:
 
 ```powershell
-.\run-test.ps1
+.\tools\run-test.ps1
 ```
 
 Or from the repository root:
 
 ```powershell
-.\rtic2-multi-head-test\run-test.ps1
+.\rtic2-multi-head-test\tools\run-test.ps1
 ```
 
 The script checks the positive cases, expects the multiple-head build to fail, expects
 the invalid `UART8` binding to fail, and writes the complete evidence to
-`test-report.md`. `Cargo.lock` is retained as part of the test artifact after the first
+`docs/test-report.md`. `Cargo.lock` is retained as part of the test artifact after the first
 run.
 
 The fixture also contains a minimal `syn` reducer in `build.rs`. It parses the selected

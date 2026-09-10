@@ -1,7 +1,8 @@
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path
-$manifest = Join-Path $root 'Cargo.toml'
-$reportPath = Join-Path $root 'test-report.md'
+$workspace = Split-Path -Parent $root
+$manifest = Join-Path $workspace 'Cargo.toml'
+$reportPath = Join-Path $workspace 'docs\test-report.md'
 $target = 'thumbv7em-none-eabihf'
 $cases = @(
     @{ Name = 'f401 shared body'; Features = 'f401'; Expected = 0 },
@@ -27,7 +28,7 @@ $report = @(
 )
 $failed = $false
 
-Push-Location $root
+Push-Location $workspace
 try {
     foreach ($case in $cases) {
         Write-Host "Running: $($case.Name)"

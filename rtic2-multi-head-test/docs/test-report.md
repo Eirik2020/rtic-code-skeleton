@@ -1,6 +1,6 @@
 ﻿# RTIC2 Multi-Head App Composition Test Report
 
-- Run: 2026-09-10 20:38:52 +02:00
+- Run: 2026-09-10 21:11:09 +02:00
 - Target: `thumbv7em-none-eabihf`
 - Manifest: `C:\ws\rtic-code-skeleton\rtic2-multi-head-test\Cargo.toml`
 
@@ -10,14 +10,16 @@
 - Actual exit code: 0
 
 ```text
-cargo.exe :     Finished `dev` profile [unoptimized + debuginfo] target(s) in 0
-.18s
-At C:\ws\rtic-code-skeleton\rtic2-multi-head-test\run-test.ps1:36 char:19
+cargo.exe :    Compiling rtic2-multi-head-test v0.1.0 (C:\ws\rtic-code-skeleton
+\rtic2-multi-head-test)
+At C:\ws\rtic-code-skeleton\rtic2-multi-head-test\tools\run-test.ps1:37 char:19
 + ...   $output = & cargo check --offline --manifest-path $manifest --targe ...
 +                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : NotSpecified: (    Finished `d...get(s) in 0.18s 
+    + CategoryInfo          : NotSpecified: (   Compiling rt...ulti-head-test) 
    :String) [], RemoteException
     + FullyQualifiedErrorId : NativeCommandError
+ 
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.99s
 ```
 
 ## PASS - f405 shared body
@@ -26,14 +28,16 @@ At C:\ws\rtic-code-skeleton\rtic2-multi-head-test\run-test.ps1:36 char:19
 - Actual exit code: 0
 
 ```text
-cargo.exe :     Finished `dev` profile [unoptimized + debuginfo] target(s) in 0
-.16s
-At C:\ws\rtic-code-skeleton\rtic2-multi-head-test\run-test.ps1:36 char:19
+cargo.exe :    Compiling rtic2-multi-head-test v0.1.0 (C:\ws\rtic-code-skeleton
+\rtic2-multi-head-test)
+At C:\ws\rtic-code-skeleton\rtic2-multi-head-test\tools\run-test.ps1:37 char:19
 + ...   $output = & cargo check --offline --manifest-path $manifest --targe ...
 +                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : NotSpecified: (    Finished `d...get(s) in 0.16s 
+    + CategoryInfo          : NotSpecified: (   Compiling rt...ulti-head-test) 
    :String) [], RemoteException
     + FullyQualifiedErrorId : NativeCommandError
+ 
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.84s
 ```
 
 ## PASS - f411 shared body
@@ -42,14 +46,16 @@ At C:\ws\rtic-code-skeleton\rtic2-multi-head-test\run-test.ps1:36 char:19
 - Actual exit code: 0
 
 ```text
-cargo.exe :     Finished `dev` profile [unoptimized + debuginfo] target(s) in 0
-.17s
-At C:\ws\rtic-code-skeleton\rtic2-multi-head-test\run-test.ps1:36 char:19
+cargo.exe :    Compiling rtic2-multi-head-test v0.1.0 (C:\ws\rtic-code-skeleton
+\rtic2-multi-head-test)
+At C:\ws\rtic-code-skeleton\rtic2-multi-head-test\tools\run-test.ps1:37 char:19
 + ...   $output = & cargo check --offline --manifest-path $manifest --targe ...
 +                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : NotSpecified: (    Finished `d...get(s) in 0.17s 
+    + CategoryInfo          : NotSpecified: (   Compiling rt...ulti-head-test) 
    :String) [], RemoteException
     + FullyQualifiedErrorId : NativeCommandError
+ 
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.56s
 ```
 
 ## PASS - f401 generated body
@@ -58,14 +64,16 @@ At C:\ws\rtic-code-skeleton\rtic2-multi-head-test\run-test.ps1:36 char:19
 - Actual exit code: 0
 
 ```text
-cargo.exe :     Finished `dev` profile [unoptimized + debuginfo] target(s) in 0
-.19s
-At C:\ws\rtic-code-skeleton\rtic2-multi-head-test\run-test.ps1:36 char:19
+cargo.exe :    Compiling rtic2-multi-head-test v0.1.0 (C:\ws\rtic-code-skeleton
+\rtic2-multi-head-test)
+At C:\ws\rtic-code-skeleton\rtic2-multi-head-test\tools\run-test.ps1:37 char:19
 + ...   $output = & cargo check --offline --manifest-path $manifest --targe ...
 +                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : NotSpecified: (    Finished `d...get(s) in 0.19s 
+    + CategoryInfo          : NotSpecified: (   Compiling rt...ulti-head-test) 
    :String) [], RemoteException
     + FullyQualifiedErrorId : NativeCommandError
+ 
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.63s
 ```
 
 ## PASS - f405 generated body
@@ -74,14 +82,16 @@ At C:\ws\rtic-code-skeleton\rtic2-multi-head-test\run-test.ps1:36 char:19
 - Actual exit code: 0
 
 ```text
-cargo.exe :     Finished `dev` profile [unoptimized + debuginfo] target(s) in 0
-.16s
-At C:\ws\rtic-code-skeleton\rtic2-multi-head-test\run-test.ps1:36 char:19
+cargo.exe :    Compiling rtic2-multi-head-test v0.1.0 (C:\ws\rtic-code-skeleton
+\rtic2-multi-head-test)
+At C:\ws\rtic-code-skeleton\rtic2-multi-head-test\tools\run-test.ps1:37 char:19
 + ...   $output = & cargo check --offline --manifest-path $manifest --targe ...
 +                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : NotSpecified: (    Finished `d...get(s) in 0.16s 
+    + CategoryInfo          : NotSpecified: (   Compiling rt...ulti-head-test) 
    :String) [], RemoteException
     + FullyQualifiedErrorId : NativeCommandError
+ 
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.88s
 ```
 
 ## PASS - syn reduction removes f405-only UART4 for f411
@@ -91,11 +101,11 @@ At C:\ws\rtic-code-skeleton\rtic2-multi-head-test\run-test.ps1:36 char:19
 
 ```text
 cargo.exe :     Finished `dev` profile [unoptimized + debuginfo] target(s) in 0
-.22s
-At C:\ws\rtic-code-skeleton\rtic2-multi-head-test\run-test.ps1:36 char:19
+.18s
+At C:\ws\rtic-code-skeleton\rtic2-multi-head-test\tools\run-test.ps1:37 char:19
 + ...   $output = & cargo check --offline --manifest-path $manifest --targe ...
 +                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : NotSpecified: (    Finished `d...get(s) in 0.22s 
+    + CategoryInfo          : NotSpecified: (    Finished `d...get(s) in 0.18s 
    :String) [], RemoteException
     + FullyQualifiedErrorId : NativeCommandError
 ```
@@ -107,11 +117,11 @@ At C:\ws\rtic-code-skeleton\rtic2-multi-head-test\run-test.ps1:36 char:19
 
 ```text
 cargo.exe :     Finished `dev` profile [unoptimized + debuginfo] target(s) in 0
-.17s
-At C:\ws\rtic-code-skeleton\rtic2-multi-head-test\run-test.ps1:36 char:19
+.18s
+At C:\ws\rtic-code-skeleton\rtic2-multi-head-test\tools\run-test.ps1:37 char:19
 + ...   $output = & cargo check --offline --manifest-path $manifest --targe ...
 +                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : NotSpecified: (    Finished `d...get(s) in 0.17s 
+    + CategoryInfo          : NotSpecified: (    Finished `d...get(s) in 0.18s 
    :String) [], RemoteException
     + FullyQualifiedErrorId : NativeCommandError
 ```
@@ -124,7 +134,7 @@ At C:\ws\rtic-code-skeleton\rtic2-multi-head-test\run-test.ps1:36 char:19
 ```text
 cargo.exe :     Finished `dev` profile [unoptimized + debuginfo] target(s) in 0
 .19s
-At C:\ws\rtic-code-skeleton\rtic2-multi-head-test\run-test.ps1:36 char:19
+At C:\ws\rtic-code-skeleton\rtic2-multi-head-test\tools\run-test.ps1:37 char:19
 + ...   $output = & cargo check --offline --manifest-path $manifest --targe ...
 +                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     + CategoryInfo          : NotSpecified: (    Finished `d...get(s) in 0.19s 
@@ -139,11 +149,11 @@ At C:\ws\rtic-code-skeleton\rtic2-multi-head-test\run-test.ps1:36 char:19
 
 ```text
 cargo.exe :     Finished `dev` profile [unoptimized + debuginfo] target(s) in 0
-.18s
-At C:\ws\rtic-code-skeleton\rtic2-multi-head-test\run-test.ps1:36 char:19
+.17s
+At C:\ws\rtic-code-skeleton\rtic2-multi-head-test\tools\run-test.ps1:37 char:19
 + ...   $output = & cargo check --offline --manifest-path $manifest --targe ...
 +                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : NotSpecified: (    Finished `d...get(s) in 0.18s 
+    + CategoryInfo          : NotSpecified: (    Finished `d...get(s) in 0.17s 
    :String) [], RemoteException
     + FullyQualifiedErrorId : NativeCommandError
 ```
@@ -155,13 +165,15 @@ At C:\ws\rtic-code-skeleton\rtic2-multi-head-test\run-test.ps1:36 char:19
 
 ```text
 cargo.exe :    Compiling stm32f4xx-hal v0.23.0
-At C:\ws\rtic-code-skeleton\rtic2-multi-head-test\run-test.ps1:36 char:19
+At C:\ws\rtic-code-skeleton\rtic2-multi-head-test\tools\run-test.ps1:37 char:19
 + ...   $output = & cargo check --offline --manifest-path $manifest --targe ...
 +                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     + CategoryInfo          : NotSpecified: (   Compiling stm32f4xx-hal v0.23. 
    0:String) [], RemoteException
     + FullyQualifiedErrorId : NativeCommandError
  
+   Compiling rtic2-multi-head-test v0.1.0 (C:\ws\rtic-code-skeleton\rtic2-multi
+-head-test)
 error: failed to run custom build command for `stm32f4xx-hal v0.23.0`
 
 Caused by:
@@ -170,10 +182,11 @@ test\target\debug\build\stm32f4xx-hal-f4106b5613392783\build-script-build` (exi
 t code: 101)
   --- stderr
 
-  thread 'main' (16808) panicked at C:\Users\xoonz\.cargo\registry\src\index.cr
-ates.io-1949cf8c6b5b557f\stm32f4xx-hal-0.23.0\build.rs:31:39:
+  thread 'main' (8712) panicked at C:\Users\xoonz\.cargo\registry\src\index.cra
+tes.io-1949cf8c6b5b557f\stm32f4xx-hal-0.23.0\build.rs:31:39:
   Multiple stm32xx Cargo features enabled
   note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+warning: build failed, waiting for other jobs to finish...
 ```
 
 ## PASS - invalid interrupt rejected
@@ -182,12 +195,12 @@ ates.io-1949cf8c6b5b557f\stm32f4xx-hal-0.23.0\build.rs:31:39:
 - Actual exit code: 101
 
 ```text
-cargo.exe :     Checking rtic2-multi-head-test v0.1.0 (C:\ws\rtic-code-skeleton
+cargo.exe :    Compiling rtic2-multi-head-test v0.1.0 (C:\ws\rtic-code-skeleton
 \rtic2-multi-head-test)
-At C:\ws\rtic-code-skeleton\rtic2-multi-head-test\run-test.ps1:36 char:19
+At C:\ws\rtic-code-skeleton\rtic2-multi-head-test\tools\run-test.ps1:37 char:19
 + ...   $output = & cargo check --offline --manifest-path $manifest --targe ...
 +                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : NotSpecified: (    Checking rt...ulti-head-test) 
+    + CategoryInfo          : NotSpecified: (   Compiling rt...ulti-head-test) 
    :String) [], RemoteException
     + FullyQualifiedErrorId : NativeCommandError
  
