@@ -75,4 +75,13 @@ mod app {
             .failsafe_state
             .lock(|f| rc_capture::on_frame(f, frame));
     }
+
+    // TEMP: gated OFF under the active feature set (board-a is default,
+    // board-b is NOT active). USART3 doesn't exist on F401. This is the
+    // precise "correctly excluded" case — does rust-analyzer's OWN
+    // diagnostics stay clean here, the way a source-level cfg reader would
+    // expect, or does it fail identically to cargo build?
+    #[cfg(feature = "board-b")]
+    #[task(binds = USART3, priority = 1)]
+    fn ra_probe(_cx: ra_probe::Context) {}
 }

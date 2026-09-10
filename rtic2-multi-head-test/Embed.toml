@@ -1,0 +1,14 @@
+[default.general]
+chip = "STM32F401CCUx"
+
+[default.rtt]
+enabled = false
+
+[f401.general]
+chip = "STM32F401CCUx"
+
+[f405.general]
+chip = "STM32F405RGTx"
+
+[f411.general]
+chip = "STM32F411CEUx"

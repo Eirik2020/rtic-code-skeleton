@@ -6,7 +6,7 @@
     you_must_enable_the_rt_feature_for_the_pac_in_your_cargo_toml;
     #[doc =
     r" Holds the maximum priority level for use by async HAL drivers."]
-    #[no_mangle] static RTIC_ASYNC_MAX_LOGICAL_PRIO : u8 = 2u8; use crate ::
+    #[no_mangle] static RTIC_ASYNC_MAX_LOGICAL_PRIO : u8 = 0u8; use crate ::
     board :: { Tim2Role, Tim3Role }; use crate :: roles :: common :: RcFrame;
     use crate :: roles :: { rc_capture, RoleCtx, RoleState, TimerRole };
     #[doc = r" User code end"] #[doc = r"Shared resources"] struct Shared
@@ -116,6 +116,14 @@
                 new(), __rtic_internal_marker : core :: marker :: PhantomData,
             }
         }
+    } #[allow(non_snake_case)] #[no_mangle] #[cfg(feature = "board-b")] unsafe
+    fn USART3()
+    {
+        const PRIORITY : u8 = 1u8; fn exec < 'non_static > ()
+        {
+            let ctx = unsafe
+            { ra_probe :: Context :: < 'non_static > :: new() }; ra_probe(ctx)
+        } rtic :: export :: run(PRIORITY, exec);
     } #[allow(non_snake_case)] #[allow(non_camel_case_types)]
     #[doc = "Local resources `tim2` has access to"] pub struct
     __rtic_internal_tim2LocalResources < 'a >
@@ -200,6 +208,24 @@
         LocalResources; #[doc(inline)] pub use super ::
         __rtic_internal_tim3SharedResources as SharedResources; #[doc(inline)]
         pub use super :: __rtic_internal_tim3_Context as Context;
+    } #[cfg(feature = "board-b")] #[doc = r" Execution context"]
+    #[allow(non_snake_case)] #[allow(non_camel_case_types)] pub struct
+    __rtic_internal_ra_probe_Context < 'a >
+    {
+        #[doc(hidden)] __rtic_internal_p : :: core :: marker :: PhantomData <
+        & 'a () > ,
+    } #[cfg(feature = "board-b")] impl < 'a > __rtic_internal_ra_probe_Context
+    < 'a >
+    {
+        #[inline(always)] #[allow(missing_docs)] pub unsafe fn new() -> Self
+        {
+            __rtic_internal_ra_probe_Context
+            { __rtic_internal_p : :: core :: marker :: PhantomData, }
+        }
+    } #[allow(non_snake_case)] #[doc = "Hardware task"] pub mod ra_probe
+    {
+        #[cfg(feature = "board-b")] #[doc(inline)] pub use super ::
+        __rtic_internal_ra_probe_Context as Context;
     } #[allow(non_snake_case)] fn tim2(cx : tim2 :: Context)
     {
         use rtic :: Mutex as _; use rtic :: mutex :: prelude :: * ; let frame
@@ -224,7 +250,10 @@
             { esc_state : esc, failsafe_state : fs, },)
         }); if let Some(frame) = frame
         { rc_frame_ready :: spawn(frame).ok(); }
-    } impl < 'a > __rtic_internal_rc_frame_readySharedResources < 'a >
+    } #[cfg(feature = "board-b")] #[allow(non_snake_case)] fn
+    ra_probe(_cx : ra_probe :: Context)
+    { use rtic :: Mutex as _; use rtic :: mutex :: prelude :: * ; } impl < 'a
+    > __rtic_internal_rc_frame_readySharedResources < 'a >
     {
         #[inline(always)] #[allow(missing_docs)] pub unsafe fn new() -> Self
         {
@@ -448,8 +477,19 @@
         cortex_logical2hw(3u8, stm32f4xx_hal :: pac :: NVIC_PRIO_BITS),); rtic
         :: export :: NVIC ::
         unmask(you_must_enable_the_rt_feature_for_the_pac_in_your_cargo_toml
-        :: interrupt :: TIM3); #[inline(never)] fn __rtic_init_resources < F >
-        (f : F) where F : FnOnce() { f(); } let mut executors_size = 0; let
+        :: interrupt :: TIM3); const _ : () = if
+        (1 << stm32f4xx_hal :: pac :: NVIC_PRIO_BITS) < 1u8 as usize
+        {
+            :: core :: panic!
+            ("Maximum priority used by interrupt vector 'USART3' is more than supported by hardware");
+        };
+        core.NVIC.set_priority(you_must_enable_the_rt_feature_for_the_pac_in_your_cargo_toml
+        :: interrupt :: USART3, rtic :: export ::
+        cortex_logical2hw(1u8, stm32f4xx_hal :: pac :: NVIC_PRIO_BITS),); rtic
+        :: export :: NVIC ::
+        unmask(you_must_enable_the_rt_feature_for_the_pac_in_your_cargo_toml
+        :: interrupt :: USART3); #[inline(never)] fn __rtic_init_resources < F
+        > (f : F) where F : FnOnce() { f(); } let mut executors_size = 0; let
         executor = :: core :: mem :: ManuallyDrop ::
         new(rtic :: export :: executor :: AsyncTaskExecutor ::
         new_2_args(rc_frame_ready));

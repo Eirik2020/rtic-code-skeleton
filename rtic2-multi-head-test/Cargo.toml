@@ -1,0 +1,22 @@
+[package]
+name = "rtic2-multi-head-test"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[build-dependencies]
+quote = "1.0.45"
+syn = { version = "2.0.119", features = ["full"] }
+
+[dependencies]
+panic-halt = "1.0.0"
+rtic = { version = "2.3.1", features = ["thumbv7-backend"] }
+stm32f4xx-hal = { version = "0.23.0" }
+
+[features]
+default = []
+f401 = ["stm32f4xx-hal/stm32f401"]
+f405 = ["stm32f4xx-hal/stm32f405"]
+f411 = ["stm32f4xx-hal/stm32f411"]
+generated-body = []
+invalid-interrupt = []
