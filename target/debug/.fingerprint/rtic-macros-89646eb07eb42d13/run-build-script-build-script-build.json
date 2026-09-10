@@ -1,0 +1,1 @@
+{"rustc":14294031689915522045,"features":"","declared_features":"","target":0,"profile":0,"path":0,"deps":[[15048126801952567269,"build_script_build",false,12263287681478810971]],"local":[{"RerunIfChanged":{"output":"debug\\build\\rtic-macros-89646eb07eb42d13\\output","paths":["build.rs"]}}],"rustflags":[],"config":0,"compile_kind":0}

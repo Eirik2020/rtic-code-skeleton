@@ -1,0 +1,1 @@
+C:\ws\rtic-code-skeleton\target\thumbv7em-none-eabihf\debug\test_single_cfg_task: C:\ws\rtic-code-skeleton\build.rs C:\ws\rtic-code-skeleton\memory.x C:\ws\rtic-code-skeleton\src\bin\test_single_cfg_task.rs

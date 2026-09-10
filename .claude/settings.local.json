@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(cargo build --bin test_sw_cfg --no-default-features --features board-a 2>&1)",
+      "PowerShell(cargo build --bin test_sw_cfg --no-default-features --features board-b 2>&1)"
+    ]
+  }
+}
