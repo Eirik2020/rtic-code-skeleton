@@ -41,6 +41,19 @@ body and removes top-level items guarded by `#[cfg(feature = "f405")]` when anot
 chip is selected, before composing the RTIC head. The reduction case is included in
 the matrix and the emitted source is under Cargo's `target/.../out/generated_app_<chip>.rs`.
 
+The reducer also filters F405-only `Shared` and `Local` resource fields and their
+`init` struct-literal fields. This keeps chip-specific resources out of the RTIC app
+when another chip is selected.
+
+The matrix also tests progressively more aggressive cfg placement: an entire task,
+cfg on the task header, and a task using a cfg-gated local resource. Each F405 task
+shares its interrupt with an F411 control task, so leaving both branches in the output
+would produce an RTIC duplicate-binding error.
+
+Compound `all`, `any`, and `not` predicates are evaluated by the reducer, and a
+cfg-gated software function is covered from the authored skeleton. A build with no
+chip feature is also expected to fail clearly.
+
 ## Cargo Embed
 
 `Embed.toml` provides `f401`, `f405`, and `f411` probe-chip profiles. Because

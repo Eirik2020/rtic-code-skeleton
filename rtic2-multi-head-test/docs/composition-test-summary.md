@@ -54,7 +54,7 @@ app under Cargo's `OUT_DIR`.
 
 ## Results
 
-All eleven matrix cases passed:
+All twenty matrix cases passed:
 
 | Case | Expected | Result |
 | --- | --- | --- |
@@ -66,6 +66,17 @@ All eleven matrix cases passed:
 | Multiple heads selected | Reject | Pass |
 | Invalid `UART8` binding | Reject | Pass |
 | Syn reduction removes F405-only `UART4` task for F411 | Compile | Pass |
+| CFG-gated F405 shared/local resources compile for F405 | Compile | Pass |
+| CFG-gated F405 shared/local resources removed for F411 | Compile | Pass |
+| Whole-task cfg keeps F405 task and removes F411 control | Compile | Pass |
+| Whole-task cfg keeps F411 control | Compile | Pass |
+| Task-header cfg keeps F405 task and removes F411 control | Compile | Pass |
+| Task-header cfg keeps F411 control | Compile | Pass |
+| Task-resource cfg keeps F405 task and removes F411 control | Compile | Pass |
+| Task-resource cfg keeps F411 control | Compile | Pass |
+| Compound `all`/`any`/`not` cfg branches | Compile | Pass |
+| Cfg-gated software function | Compile | Pass |
+| No chip feature selected | Reject | Pass |
 
 The complete command output is retained in [test-report.md](test-report.md).
 

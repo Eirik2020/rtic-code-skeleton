@@ -14,8 +14,17 @@ $cases = @(
     @{ Name = 'f405-only UART4 retained'; Features = 'f405'; Expected = 0 },
     @{ Name = 'f405-only UART4 removed for f401'; Features = 'f401'; Expected = 0 },
     @{ Name = 'f405-only UART4 removed for f411'; Features = 'f411'; Expected = 0 },
+    @{ Name = 'cfg-gated resources compile for f405'; Features = 'f405'; Expected = 0 },
+    @{ Name = 'cfg-gated resources removed for f411'; Features = 'f411'; Expected = 0 },
+    @{ Name = 'cfg whole task keeps f405 and removes f411 control'; Features = 'f405'; Expected = 0 },
+    @{ Name = 'cfg whole task keeps f411 control'; Features = 'f411'; Expected = 0 },
+    @{ Name = 'cfg task header keeps f405 and removes f411 control'; Features = 'f405'; Expected = 0 },
+    @{ Name = 'cfg task header keeps f411 control'; Features = 'f411'; Expected = 0 },
+    @{ Name = 'cfg task resource keeps f405 and removes f411 control'; Features = 'f405'; Expected = 0 },
+    @{ Name = 'cfg task resource keeps f411 control'; Features = 'f411'; Expected = 0 },
     @{ Name = 'multiple heads rejected'; Features = 'f401,f405'; Expected = 101 },
-    @{ Name = 'invalid interrupt rejected'; Features = 'f401,invalid-interrupt'; Expected = 101 }
+    @{ Name = 'invalid interrupt rejected'; Features = 'f401,invalid-interrupt'; Expected = 101 },
+    @{ Name = 'no chip rejected'; Features = ''; Expected = 101 }
 )
 
 $report = @(
@@ -34,14 +43,20 @@ try {
         Write-Host "Running: $($case.Name)"
         $previousErrorActionPreference = $ErrorActionPreference
         $ErrorActionPreference = 'Continue'
-        $output = & cargo check --offline --manifest-path $manifest --target $target --no-default-features --features $case.Features 2>&1 | Out-String
+        $cargoArgs = @('check', '--offline', '--manifest-path', $manifest, '--target', $target, '--no-default-features')
+        if ($case.Features) {
+            $cargoArgs += @('--features', $case.Features)
+        }
+        $output = & cargo @cargoArgs 2>&1 | Out-String
         $exitCode = $LASTEXITCODE
         $ErrorActionPreference = $previousErrorActionPreference
         $passed = $exitCode -eq $case.Expected
         if (-not $passed) { $failed = $true }
         $status = if ($passed) { 'PASS' } else { 'FAIL' }
         $report += "## $status - $($case.Name)"
-        $report += (('`') + "cargo check --offline --target $target --no-default-features --features $($case.Features)" + ('`'))
+        $command = "cargo check --offline --target $target --no-default-features"
+        if ($case.Features) { $command += " --features $($case.Features)" }
+        $report += (('`') + $command + ('`'))
         $report += "- Expected exit code: $($case.Expected)"
         $report += "- Actual exit code: $exitCode"
         $report += ''
