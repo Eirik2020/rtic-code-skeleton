@@ -1,0 +1,7 @@
+name = "ST NUCLEO-F401RE"
+chip = "f401"
+part = "STM32F401RETx"
+cargo_feature = "system-nucleo-f401re"
+embed_profile = "nucleo-f401re"
+
+# Wiring, clock setup and timer allocation are implemented in mod.rs.

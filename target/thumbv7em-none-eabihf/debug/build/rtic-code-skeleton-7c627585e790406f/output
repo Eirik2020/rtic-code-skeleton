@@ -1,2 +1,0 @@
-cargo:rustc-link-search=C:\ws\rtic-code-skeleton\target\thumbv7em-none-eabihf\debug\build\rtic-code-skeleton-7c627585e790406f\out
-cargo:rerun-if-changed=memory.x

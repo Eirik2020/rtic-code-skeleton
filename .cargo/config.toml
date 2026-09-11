@@ -1,6 +1,36 @@
 [build]
 target = "thumbv7em-none-eabihf"
 
+# `cargo build f401` / `cargo embed f401` aren't possible: `build` is a
+# built-in verb (its parser is fixed inside Cargo, no positional-to-feature
+# mapping exists), and `embed`'s positional argument is hardcoded to mean
+# "Embed.toml profile name", not a Cargo feature. These aliases are the
+# closest equivalent — a distinct subcommand name per chip, since Cargo
+# aliases can't override or intercept an existing verb's argument parsing.
+[alias]
+check-default-f401 = "check --features system-default-f401"
+check-default-f405 = "check --features system-default-f405"
+check-default-f411 = "check --features system-default-f411"
+build-default-f401 = "build --features system-default-f401"
+build-default-f405 = "build --features system-default-f405"
+build-default-f411 = "build --features system-default-f411"
+embed-default-f401 = "embed --features system-default-f401 default-f401"
+embed-default-f405 = "embed --features system-default-f405 default-f405"
+embed-default-f411 = "embed --features system-default-f411 default-f411"
+check-nucleo-f401re = "check --features system-nucleo-f401re"
+build-nucleo-f401re = "build --features system-nucleo-f401re"
+embed-nucleo-f401re = "embed --features system-nucleo-f401re nucleo-f401re"
+# Low-level chip-only builds/probe profiles (no system wiring is initialized).
+check-f401 = "check --features f401"
+check-f405 = "check --features f405"
+check-f411 = "check --features f411"
+build-f401 = "build --features f401"
+build-f405 = "build --features f405"
+build-f411 = "build --features f411"
+embed-f401 = "embed --features f401 f401"
+embed-f405 = "embed --features f405 f405"
+embed-f411 = "embed --features f411 f411"
+
 [target.thumbv7em-none-eabihf]
 rustflags = [
   "-C", "link-arg=-Tlink.x",

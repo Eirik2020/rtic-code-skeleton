@@ -2,15 +2,36 @@
 name = "rtic-code-skeleton"
 version = "0.1.0"
 edition = "2024"
+publish = false
+
+[workspace]
+members = ["tools/rtic-app-cfg"]
+resolver = "3"
+
+[build-dependencies]
+prettyplease = "0.2"
+quote = "1.0.45"
+syn = { version = "2.0.119", features = ["full", "visit-mut"] }
+toml = "0.8.23"
 
 [dependencies]
+rtic-app-cfg = { path = "tools/rtic-app-cfg" }
 cortex-m = "0.7.9"
 cortex-m-rt = "0.7.6"
 panic-halt = "1.0.0"
 rtic = { version = "2.3.1", features = ["thumbv7-backend"] }
-stm32f4xx-hal = { version = "0.23.0", features = ["stm32f401"] }
+stm32f4xx-hal = { version = "0.23.0" }
 
 [features]
-default = ["board-a"]
-board-a = []
-board-b = []
+default = []
+f401 = ["stm32f4xx-hal/stm32f401"]
+f405 = ["stm32f4xx-hal/stm32f405"]
+f411 = ["stm32f4xx-hal/stm32f411"]
+
+# A system selects its chip; selecting a chip alone does not select a system.
+system-nucleo-f401re = ["f401"]
+system-default-f401 = ["f401"]
+system-default-f405 = ["f405"]
+system-default-f411 = ["f411"]
+generated-body = []
+invalid-interrupt = []

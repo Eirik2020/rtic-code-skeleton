@@ -1,0 +1,7 @@
+name = "Default F401 system"
+chip = "f401"
+part = "STM32F401RETx"
+cargo_feature = "system-default-f401"
+embed_profile = "default-f401"
+
+# Minimal system: no board-specific pins, peripherals or clock setup.

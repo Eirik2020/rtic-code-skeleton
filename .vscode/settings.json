@@ -1,0 +1,4 @@
+{
+  "rust-analyzer.cargo.features": ["system-nucleo-f401re"],
+  "rust-analyzer.check.allTargets": false
+}

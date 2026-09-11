@@ -1,0 +1,10 @@
+chip = "f401"
+cargo_feature = "f401"
+pac_feature = "stm32f4xx-hal/stm32f401"
+default_part = "STM32F401RETx"
+
+# Part properties, reusable by every system that uses this MCU.
+[parts.STM32F401RETx]
+probe_chip = "STM32F401RE"
+flash_kib = 512
+ram_kib = 96

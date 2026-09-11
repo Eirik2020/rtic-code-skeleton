@@ -1,0 +1,7 @@
+name = "Default F411 system"
+chip = "f411"
+part = "STM32F411CEUx"
+cargo_feature = "system-default-f411"
+embed_profile = "default-f411"
+
+# Minimal system: no board-specific pins, peripherals or clock setup.

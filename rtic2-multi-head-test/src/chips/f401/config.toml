@@ -1,3 +1,0 @@
-chip = "STM32F401CCUx"
-cargo_feature = "f401"
-pac_feature = "stm32f4xx-hal/stm32f401"

@@ -1,0 +1,26 @@
+[default.general]
+chip = "STM32F401RE"
+
+[default.rtt]
+enabled = false
+
+[nucleo-f401re.general]
+chip = "STM32F401RE"
+
+[default-f401.general]
+chip = "STM32F401RE"
+
+[default-f405.general]
+chip = "STM32F405RGTx"
+
+[default-f411.general]
+chip = "STM32F411CEUx"
+
+[f401.general]
+chip = "STM32F401RE"
+
+[f405.general]
+chip = "STM32F405RGTx"
+
+[f411.general]
+chip = "STM32F411CEUx"
