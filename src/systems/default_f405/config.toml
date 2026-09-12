@@ -1,7 +1,0 @@
-name = "Default F405 system"
-chip = "f405"
-part = "STM32F405RGTx"
-cargo_feature = "system-default-f405"
-embed_profile = "default-f405"
-
-# Minimal system: no board-specific pins, peripherals or clock setup.

@@ -2,7 +2,7 @@ $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path
 $workspace = Split-Path -Parent $root
 $manifest = Join-Path $workspace 'Cargo.toml'
-$reportPath = Join-Path $workspace 'docs\test-report.md'
+$reportPath = Join-Path $workspace 'docs\verification\test-report.md'
 $target = 'thumbv7em-none-eabihf'
 $cases = @(
     @{ Name = 'default F401 system'; Features = 'system-default-f401'; Expected = 0 },
@@ -11,6 +11,8 @@ $cases = @(
     @{ Name = 'two systems sharing F401 rejected'; Features = 'system-default-f401,system-nucleo-f401re'; Expected = 101; ErrorPattern = 'select at most one system feature' },
     @{ Name = 'systems using different chips rejected'; Features = 'system-default-f401,system-default-f405'; Expected = 101 },
     @{ Name = 'Nucleo system selects F401 and its hardware'; Features = 'system-nucleo-f401re'; Expected = 0 },
+    @{ Name = 'Nucleo prototype enables report software'; Features = 'system-nucleo-f401re,sw-report'; Expected = 0 },
+    @{ Name = 'report software without prototype board rejected'; Features = 'f401,sw-report'; Expected = 101; ErrorPattern = "feature 'sw-report' requires the Nucleo board prototype" },
     @{ Name = 'Nucleo system accepts explicit matching chip'; Features = 'system-nucleo-f401re,f401'; Expected = 0 },
     @{ Name = 'Nucleo system rejects incompatible chip'; Features = 'system-nucleo-f401re,f405'; Expected = 101 },
     @{ Name = 'Nucleo system rejects generated-body fixture'; Features = 'system-nucleo-f401re,generated-body'; Expected = 101 },

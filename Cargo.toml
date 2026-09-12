@@ -5,11 +5,13 @@ edition = "2024"
 publish = false
 
 [workspace]
-members = ["tools/rtic-app-cfg"]
+members = ["catalog", "tools/rtic-app-cfg"]
 resolver = "3"
 
 [build-dependencies]
+catalog = { path = "catalog" }
 prettyplease = "0.2"
+proc-macro2 = "1.0"
 quote = "1.0.45"
 syn = { version = "2.0.119", features = ["full", "visit-mut"] }
 toml = "0.8.23"
@@ -18,8 +20,12 @@ toml = "0.8.23"
 rtic-app-cfg = { path = "tools/rtic-app-cfg" }
 cortex-m = "0.7.9"
 cortex-m-rt = "0.7.6"
+defmt = { version = "1.0", optional = true }
+defmt-rtt = { version = "1.0", optional = true }
+fugit = "0.3.9"
 panic-halt = "1.0.0"
 rtic = { version = "2.3.1", features = ["thumbv7-backend"] }
+rtic-monotonics = { version = "2.2.1", features = ["cortex-m-systick"] }
 stm32f4xx-hal = { version = "0.23.0" }
 
 [features]
@@ -33,5 +39,9 @@ system-nucleo-f401re = ["f401"]
 system-default-f401 = ["f401"]
 system-default-f405 = ["f405"]
 system-default-f411 = ["f411"]
+sw-report = ["dep:defmt", "dep:defmt-rtt"]
 generated-body = []
 invalid-interrupt = []
+
+[lints.rust]
+unexpected_cfgs = "deny"

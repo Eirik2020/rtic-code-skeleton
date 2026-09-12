@@ -1,0 +1,10 @@
+# Peripheral driver construction logic belongs in src/hardware/ (see
+# AGENTS.md and docs/roadmap/hardware-construction-redesign.md) — board files
+# pick concrete instances/pins, not how a peripheral gets configured. Files
+# that legitimately call these opt out locally with
+# `#![allow(clippy::disallowed_methods)]`.
+disallowed-methods = [
+    { path = "stm32f4xx_hal::timer::TimerExt::counter_hz", reason = "construct timers via hardware::timer::Periodic::new, not directly" },
+    { path = "stm32f4xx_hal::serial::SerialExt::serial", reason = "construct serial ports via hardware::serial::new, not directly" },
+    { path = "stm32f4xx_hal::timer::pwm::PwmExt::pwm_hz", reason = "construct PWM timers via hardware::pwm::new, not directly" },
+]

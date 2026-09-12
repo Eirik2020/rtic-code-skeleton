@@ -5,34 +5,60 @@
 
 use proc_macro::TokenStream;
 use quote::quote;
+use std::collections::BTreeSet;
 use syn::{Attribute, Expr, Item, Meta, Stmt, Token, punctuated::Punctuated, visit_mut::VisitMut};
 
-const CHIPS: [&str; 3] = ["f401", "f405", "f411"];
-#[path = "../../../src/systems/catalog.rs"]
-mod systems_catalog;
-use systems_catalog::SYSTEMS;
+const SOFTWARE_FEATURES: [&str; 1] = ["sw-report"];
 
 struct Selection {
     chip: syn::Ident,
     system: Option<syn::LitStr>,
+    software: Vec<syn::LitStr>,
 }
 
 impl syn::parse::Parse for Selection {
     fn parse(input: syn::parse::ParseStream<'_>) -> syn::Result<Self> {
         let chip = input.parse()?;
-        let system = if input.is_empty() {
-            None
-        } else {
+        let mut system = None;
+        let mut software = Vec::new();
+        while !input.is_empty() {
             input.parse::<Token![,]>()?;
-            Some(input.parse()?)
-        };
-        Ok(Self { chip, system })
+            if input.peek(syn::LitStr) {
+                if system.is_some() {
+                    return Err(input.error("system may be specified only once"));
+                }
+                system = Some(input.parse()?);
+                continue;
+            }
+            let key: syn::Ident = input.parse()?;
+            if key != "software" {
+                return Err(syn::Error::new_spanned(
+                    key,
+                    "expected software = [\"feature\", ...]",
+                ));
+            }
+            input.parse::<Token![=]>()?;
+            let contents;
+            syn::bracketed!(contents in input);
+            software.extend(
+                contents
+                    .parse_terminated(|input| input.parse(), Token![,])?
+                    .into_iter(),
+            );
+        }
+        Ok(Self {
+            chip,
+            system,
+            software,
+        })
     }
 }
 
 struct Reducer {
     chip: String,
     system: Option<String>,
+    software: BTreeSet<String>,
+    board: Option<catalog::BoardConfig>,
     error: Option<syn::Error>,
 }
 
@@ -43,12 +69,43 @@ impl Reducer {
                 if let Expr::Lit(expr) = &value.value {
                     if let syn::Lit::Str(feature) = &expr.lit {
                         let name = feature.value();
-                        if CHIPS.contains(&name.as_str()) {
+                        if catalog::Chip::from_cargo_feature(&name).is_some() {
                             return Ok(name == self.chip);
                         }
-                        if SYSTEMS.iter().any(|(system, _)| *system == name) {
+                        if catalog::system_config(&name).is_some() {
                             return Ok(self.system.as_deref() == Some(name.as_str()));
                         }
+                        if SOFTWARE_FEATURES.contains(&name.as_str()) {
+                            return Ok(self.software.contains(&name));
+                        }
+                    }
+                }
+            }
+            Meta::NameValue(value)
+                if value.path.is_ident("board_peripheral")
+                    || value.path.is_ident("board_pin")
+                    || value.path.is_ident("board_dma") =>
+            {
+                if let Expr::Lit(expr) = &value.value {
+                    if let syn::Lit::Str(name) = &expr.lit {
+                        let name = name.value();
+                        let enabled =
+                            match value.path.get_ident().map(ToString::to_string).as_deref() {
+                                Some("board_peripheral") => self
+                                    .board
+                                    .as_ref()
+                                    .is_some_and(|board| board.has_peripheral(&name)),
+                                Some("board_pin") => self
+                                    .board
+                                    .as_ref()
+                                    .is_some_and(|board| board.has_pin(&name)),
+                                Some("board_dma") => self
+                                    .board
+                                    .as_ref()
+                                    .is_some_and(|board| board.has_dma(&name)),
+                                _ => false,
+                            };
+                        return Ok(enabled);
                     }
                 }
             }
@@ -81,7 +138,7 @@ impl Reducer {
         }
         Err(syn::Error::new_spanned(
             meta,
-            "RTIC preprocessing supports registered chip/system features and all/any/not; register new features in the reducer before using them here",
+            "RTIC preprocessing supports registered chip/system/software features, board_peripheral/board_pin/board_dma, and all/any/not; register new predicates before using them here",
         ))
     }
 
@@ -194,21 +251,37 @@ impl VisitMut for Reducer {
     }
 }
 
-fn reduce(chip: &str, system: Option<&str>, module: &mut syn::ItemMod) -> syn::Result<()> {
-    if !CHIPS.contains(&chip) {
+fn reduce(
+    chip: &str,
+    system: Option<&str>,
+    software: &[String],
+    module: &mut syn::ItemMod,
+) -> syn::Result<()> {
+    if catalog::Chip::from_cargo_feature(chip).is_none() {
         return Err(syn::Error::new_spanned(
             &module.ident,
             "expected f401, f405, or f411",
         ));
     }
     if let Some(system) = system {
-        if !SYSTEMS.contains(&(system, chip)) {
+        let matches_chip = catalog::system_config(system)
+            .is_some_and(|config| config.chip().cargo_feature() == chip);
+        if !matches_chip {
             return Err(syn::Error::new_spanned(
                 &module.ident,
                 "unknown system or system/chip mismatch",
             ));
         }
     }
+    for feature in software {
+        if !SOFTWARE_FEATURES.contains(&feature.as_str()) {
+            return Err(syn::Error::new_spanned(
+                &module.ident,
+                format!("unknown software feature '{feature}'"),
+            ));
+        }
+    }
+    let board = system.and_then(catalog::system_config).and_then(|config| config.board);
     let Some((_, items)) = &mut module.content else {
         return Err(syn::Error::new_spanned(
             module,
@@ -218,19 +291,31 @@ fn reduce(chip: &str, system: Option<&str>, module: &mut syn::ItemMod) -> syn::R
     let mut reducer = Reducer {
         chip: chip.into(),
         system: system.map(str::to_owned),
+        software: software.iter().cloned().collect(),
+        board,
         error: None,
     };
     reducer.items(items);
     reducer.error.map_or(Ok(()), Err)
 }
 
-/// Place before RTIC, with an optional explicit system: `for_chip(f401, "system-nucleo-f401re")`.
+/// Place before RTIC, with an optional explicit system and software feature list.
 #[proc_macro_attribute]
 pub fn for_chip(args: TokenStream, input: TokenStream) -> TokenStream {
     let selection = syn::parse_macro_input!(args as Selection);
     let system = selection.system.as_ref().map(syn::LitStr::value);
+    let software = selection
+        .software
+        .iter()
+        .map(syn::LitStr::value)
+        .collect::<Vec<_>>();
     let mut module = syn::parse_macro_input!(input as syn::ItemMod);
-    match reduce(&selection.chip.to_string(), system.as_deref(), &mut module) {
+    match reduce(
+        &selection.chip.to_string(),
+        system.as_deref(),
+        &software,
+        &mut module,
+    ) {
         Ok(()) => quote!(#module).into(),
         Err(error) => error.to_compile_error().into(),
     }
@@ -241,11 +326,22 @@ mod tests {
     use super::*;
 
     #[test]
+    fn parses_explicit_software_selection() {
+        let selection = syn::parse_str::<Selection>(
+            r#"f401, "system-nucleo-f401re", software = ["sw-report"]"#,
+        )
+        .unwrap();
+        assert_eq!(selection.chip, "f401");
+        assert_eq!(selection.system.unwrap().value(), "system-nucleo-f401re");
+        assert_eq!(selection.software[0].value(), "sw-report");
+    }
+
+    #[test]
     fn reduces_real_skeleton_for_every_chip() {
         let source = include_str!("../../../src/app_body_skeleton.rs");
-        for chip in CHIPS {
+        for chip in catalog::Chip::ALL.map(catalog::Chip::cargo_feature) {
             let mut module = syn::parse_str::<syn::ItemMod>(source).unwrap();
-            reduce(chip, None, &mut module).unwrap();
+            reduce(chip, None, &[], &mut module).unwrap();
             let tokens = quote!(#module).to_string();
             let items = &module.content.unwrap().1;
             let inits = items
@@ -254,6 +350,10 @@ mod tests {
                 .count();
             assert_eq!(inits, 1, "{chip}");
             assert_eq!(tokens.contains("f405_shared"), chip == "f405");
+            assert!(tokens.contains("counter"), "{chip}");
+            assert!(tokens.contains("buffer"), "{chip}");
+            assert!(tokens.contains("app_prelude"), "{chip}");
+            assert!(tokens.contains("Mono :: start"), "{chip}");
             assert_eq!(tokens.contains("f405_whole_task"), chip == "f405");
             assert_eq!(tokens.contains("f411_whole_control"), chip == "f411");
             assert!(
@@ -261,6 +361,7 @@ mod tests {
                 "chip-only builds must not include system tasks"
             );
             assert!(!tokens.contains("Hardware"));
+            assert!(!tokens.contains("fn report"));
         }
     }
 
@@ -272,7 +373,7 @@ mod tests {
                 fn task() {}
             }
         };
-        assert!(reduce("f401", None, &mut module).is_err());
+        assert!(reduce("f401", None, &[], &mut module).is_err());
     }
 
     #[test]
@@ -287,7 +388,7 @@ mod tests {
                 }
             }
         };
-        reduce("f405", None, &mut module).unwrap();
+        reduce("f405", None, &[], &mut module).unwrap();
         let tokens = quote!(#module).to_string();
         assert!(!tokens.contains("cfg"));
         assert!(!tokens.contains("absent"));
@@ -299,36 +400,70 @@ mod tests {
         let mut module =
             syn::parse_str::<syn::ItemMod>(include_str!("../../../src/app_body_skeleton.rs"))
                 .unwrap();
-        reduce("f401", Some("system-nucleo-f401re"), &mut module).unwrap();
+        reduce(
+            "f401",
+            Some("system-nucleo-f401re"),
+            &["sw-report".to_owned()],
+            &mut module,
+        )
+        .unwrap();
         let tokens = quote!(#module).to_string();
         assert!(tokens.contains("fn blink"));
-        assert!(tokens.contains("Hardware"));
+        assert!(tokens.contains("Board :: new"));
+        assert!(tokens.contains("fn report_timer_interrupt"));
+        assert!(tokens.contains("fn timer2_interrupt"));
+        assert!(tokens.contains("fn start_pwm"));
+        assert!(tokens.contains("fn serial2_interrupt"));
+        assert!(tokens.contains("fn serial3_interrupt"));
+        assert!(tokens.contains("fn report"));
+        assert!(tokens.contains("Hello World!"));
         assert!(!tokens.contains("UART4"));
         assert_eq!(tokens.matches("fn init").count(), 1);
     }
 
     #[test]
+    fn nucleo_without_report_keeps_hardware_but_removes_software() {
+        let mut module =
+            syn::parse_str::<syn::ItemMod>(include_str!("../../../src/app_body_skeleton.rs"))
+                .unwrap();
+        reduce("f401", Some("system-nucleo-f401re"), &[], &mut module).unwrap();
+        let tokens = quote!(#module).to_string();
+        assert!(tokens.contains("fn blink"));
+        assert!(tokens.contains("fn report_timer_interrupt"));
+        assert!(!tokens.contains("fn report ("));
+        assert!(!tokens.contains("Hello World!"));
+        assert!(!tokens.contains("report :: spawn"));
+    }
+
+    #[test]
     fn rejects_incompatible_or_unknown_system() {
         let mut module = syn::parse_quote! { mod app {} };
-        assert!(reduce("f405", Some("system-nucleo-f401re"), &mut module).is_err());
-        assert!(reduce("f401", Some("system-unknown"), &mut module).is_err());
+        assert!(reduce("f405", Some("system-nucleo-f401re"), &[], &mut module).is_err());
+        assert!(reduce("f401", Some("system-unknown"), &[], &mut module).is_err());
+        assert!(reduce("f401", None, &["sw-unknown".to_owned()], &mut module).is_err());
     }
 
     #[test]
     fn default_systems_keep_chip_tasks_without_nucleo_wiring() {
-        for &(system, chip) in SYSTEMS
-            .iter()
-            .filter(|(system, _)| system.starts_with("system-default-"))
+        for system in catalog::all_systems()
+            .into_iter()
+            .filter(|system| system.cargo_feature.starts_with("system-default-"))
         {
+            let chip = system.chip().cargo_feature();
             let mut module =
                 syn::parse_str::<syn::ItemMod>(include_str!("../../../src/app_body_skeleton.rs"))
                     .unwrap();
-            reduce(chip, Some(system), &mut module).unwrap();
+            reduce(chip, Some(system.cargo_feature), &[], &mut module).unwrap();
             let tokens = quote!(#module).to_string();
-            assert_eq!(tokens.matches("fn init").count(), 1, "{system}");
-            assert!(!tokens.contains("Hardware"), "{system}");
-            assert!(!tokens.contains("fn blink"), "{system}");
-            assert_eq!(tokens.contains("UART4"), chip == "f405", "{system}");
+            assert_eq!(tokens.matches("fn init").count(), 1, "{}", system.cargo_feature);
+            assert!(!tokens.contains("Board :: new"), "{}", system.cargo_feature);
+            assert!(!tokens.contains("fn blink"), "{}", system.cargo_feature);
+            assert_eq!(
+                tokens.contains("UART4"),
+                chip == "f405",
+                "{}",
+                system.cargo_feature
+            );
         }
     }
 }

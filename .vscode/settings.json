@@ -1,4 +1,5 @@
 {
-  "rust-analyzer.cargo.features": ["system-nucleo-f401re"],
-  "rust-analyzer.check.allTargets": false
+  "rust-analyzer.cargo.features": ["system-nucleo-f401re", "sw-report"],
+  "rust-analyzer.check.allTargets": false,
+  "rust-analyzer.cargo.target": "x86_64-pc-windows-msvc"
 }

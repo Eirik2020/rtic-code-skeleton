@@ -1,9 +1,0 @@
-chip = "f411"
-cargo_feature = "f411"
-pac_feature = "stm32f4xx-hal/stm32f411"
-default_part = "STM32F411CEUx"
-
-[parts.STM32F411CEUx]
-probe_chip = "STM32F411CEUx"
-flash_kib = 512
-ram_kib = 128

@@ -7,6 +7,9 @@ enabled = false
 [nucleo-f401re.general]
 chip = "STM32F401RE"
 
+[nucleo-f401re.rtt]
+enabled = true
+
 [default-f401.general]
 chip = "STM32F401RE"
 

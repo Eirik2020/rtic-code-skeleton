@@ -2,7 +2,16 @@
   "permissions": {
     "allow": [
       "PowerShell(cargo build --bin test_sw_cfg --no-default-features --features board-a 2>&1)",
-      "PowerShell(cargo build --bin test_sw_cfg --no-default-features --features board-b 2>&1)"
+      "PowerShell(cargo build --bin test_sw_cfg --no-default-features --features board-b 2>&1)",
+      "Bash(cargo test *)",
+      "Bash(rustc -vV)",
+      "Bash(cargo check-nucleo-f401re *)",
+      "Bash(cargo build-nucleo-f401re *)",
+      "Bash(cargo check-default-f401 *)",
+      "Bash(cargo check-default-f405 *)",
+      "Bash(cargo check-default-f411 *)",
+      "PowerShell(powershell -NoProfile -ExecutionPolicy Bypass -File tools/run-test.ps1)",
+      "Bash(cargo build *)"
     ]
   }
 }
